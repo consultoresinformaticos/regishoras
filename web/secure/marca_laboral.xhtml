@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:body>
+        <ui:composition template="/template/base.xhtml">
+            <ui:define name="title">
+                #{msg['marcacion.personal.title']}
+            </ui:define>
+            <ui:define name="content-header">
+                <h1>
+                    #{msg['marcacion.personal.title']}
+                </h1>
+                <ol class="breadcrumb">
+                    <li><a href="#"><i class="fa fa-dashboard"></i>#{msg['marcacion.generic.home']}</a></li>
+                </ol>
+            </ui:define>
+            <ui:define name="content-title">
+                #{msg['marcacion.generic.title.mlaboral']}
+            </ui:define>
+
+            <ui:define name="content">
+                <h:form>
+                    <div class="box-body">
+
+                        <div class="form-group">
+                            <h:outputLabel value="#{msg['marcacion.loginName']}" for="username" />
+                            <h:inputText value="#{marcaLaboralBean.marcaLaboral.usuario.username}" id="username" styleClass="form-control"  a:placeholder="#{msg['marcacion.loginName']}" required="true" requiredMessage="#{msg['marcacion.marcalaboral.username.required']}"  style="#{component.valid ? 'border-color:#d2d6de;' : 'border-color:#dd4b39;'}" />
+                        </div>
+                        <div class="form-group">
+                            <h:outputLabel value="#{msg['marcacion.generic.sucursal']}" for="sucursal" />
+                            <h:panelGroup id="sucursal">
+                                <h:selectOneMenu styleClass="form-control form-validate" value="#{marcaLaboralBean.marcaLaboral.sucursal}" converter="sucursalConverter" required="true" requiredMessage="#{msg['marcacion.marcalaboral.sucursal.required']}" style="#{component.valid ? 'border-color:#d2d6de;' : 'border-color:#dd4b39;'}">
+                                    <f:selectItem itemValue="" itemLabel="#{msg['marcacion.generic.select']}" />
+                                    <f:selectItems value="#{marcaLaboralBean.sucursalList}" var="sucrusal" itemLabel="#{sucursal.nombre}" itemValue="#{sucrusal}" />
+                                </h:selectOneMenu>
+                            </h:panelGroup>
+                        </div>
+                        <div class="form-group">
+                            <h:outputLabel value="#{msg['marcacion.generic.motivo']}" for="motivo" />
+                            <h:panelGroup id="motivo">
+                                <h:selectOneMenu styleClass="form-control" value="#{marcaLaboralBean.marcaLaboral.motivo}" converter="marcaMotivoConverter" required="true" requiredMessage="#{msg['marcacion.marcalaboral.motivo.required']}" style="#{component.valid ? 'border-color:#d2d6de;' : 'border-color:#dd4b39;'}">
+                                    <f:selectItem itemValue="" itemLabel="#{msg['marcacion.generic.select']}" />
+                                    <f:selectItems value="#{marcaLaboralBean.marcaMotivoList}" var="marcaLaboral" itemLabel="#{marcaLaboral.motivo}" itemValue="#{marcaLaboral}" />
+                                </h:selectOneMenu>
+                            </h:panelGroup>
+                        </div>
+                        <div class="form-group">
+                            <h:outputLabel value="#{msg['marcacion.generic.motivoDetalle']}" for="motivoDetalle" />
+                            <h:inputTextarea value="#{marcaLaboralBean.marcaLaboral.detMotivo}" id="motivoDetalle" styleClass="form-control"  a:placeholder="#{msg['marcacion.generic.motivoDetalleDescripcion']}"/>
+                        </div>
+                        <span>
+                            <h:commandButton action="#{marcaLaboralBean.add}" styleClass="btn btn-primary" value="#{msg['marcacion.generic.btnAdd']}" onclick="valid()">
+
+                            </h:commandButton>
+                        </span>
+
+                    </div>
+                    <div class="message">
+                        <h:messages errorClass="alert alert-danger" infoClass="alert alert-success" styleClass="messages-info" id="messages"/>
+                    </div>
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="additional-js">
+            </ui:define>
+
+        </ui:composition>
+    </h:body>
+</html>

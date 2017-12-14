@@ -1,0 +1,24 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Mar 28, 2017, 1:26:51 PM
+    Author     : enrique
+*/
+
+td .action-area .btn{
+    margin: 1em;
+    padding: 1em;
+}
+
+.message ul{
+    padding: 1em 0em 0.5em 0em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+.message ul li.alert{
+    list-style: none;
+}

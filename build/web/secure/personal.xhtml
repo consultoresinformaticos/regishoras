@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:body>
+        <ui:composition template="/template/base.xhtml">
+
+            <ui:define name="title">
+                #{msg['marcacion.personal.title']}
+            </ui:define>
+
+            <ui:define name="content-header">
+                <h1>
+                    #{msg['marcacion.personal.title']}
+                </h1>
+                <ol class="breadcrumb">
+                    <li><a href="#"><i class="fa fa-dashboard"></i>#{msg['marcacion.generic.home']}</a></li>
+                </ol>
+            </ui:define>
+            <ui:define name="content-title">
+                #{msg['marcacion.generic.Personal']}
+            </ui:define>
+
+            <ui:define name="content">
+                <div class="box-body">
+                    <h:panelGroup id="box-table">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>#{msg['marcacion.personal.idhash']}</th>
+                                    <th>#{msg['marcacion.personal.name']}</th>
+                                    <th>#{msg['marcacion.personal.username']}</th>
+                                    <th>#{msg['marcacion.personal.rol']}</th>
+                                    <th>#{msg['marcacion.personal.activeTh']}</th>
+                                    <th style="width: 19em;">#{msg['marcacion.personal.action']}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ui:repeat var="usu" value="#{usuarioBean.usuarioList}" varStatus="status">
+                                    <tr>
+                                        <td>
+                                            #{usu.id}
+                                        </td>
+                                        <td>
+                                            #{usu.presona}
+                                        </td>
+                                        <td>
+                                            #{usu.username}
+                                        </td>
+                                        <td>
+                                            #{usu.rol}
+                                        </td>
+                                        <td>
+                                            <c:if test="#{usu.activo eq 1}">
+                                                <h:outputText value="#{msg['marcacion.personal.active']}" />
+                                            </c:if>
+                                            <c:if test="#{usu.activo ne 1}">
+                                                <h:outputText value="#{msg['marcacion.personal.inactive']}" />
+                                            </c:if>
+                                        </td>
+                                        <td class="action-area">
+                                            <h:form>
+                                                <span>
+                                                    <h:commandButton class="btn btn-book" value="#{msg['marcacion.generic.btnInforme']}">
+                                                        <f:setPropertyActionListener target="#{usuarioBean.usuarioSelected}" value="#{usu}" />
+                                                    </h:commandButton>
+                                                </span>
+                                                <span>
+                                                    <h:commandButton type="button" class="btn btn-warning btn-new" value="#{msg['marcacion.generic.btnupdate']}">
+                                                        <f:setPropertyActionListener target="#{usuarioBean.usuarioSelected}" value="#{usu}" />
+                                                        <f:setPropertyActionListener target="#{usuarioBean.persona}" value="#{usu.presona}" />
+                                                        <f:ajax render=":form-add:personalForm" />
+                                                    </h:commandButton>
+                                                </span>
+                                                <c:if test="#{usu.activo == 1}">
+                                                    <span>
+                                                        <h:commandButton class="btn btn-danger" value="#{msg['marcacion.generic.btnInactive']}" actionListener="#{usuarioBean.changeState}">
+                                                            <f:setPropertyActionListener target="#{usuarioBean.usuarioSelected}" value="#{usu}" />
+                                                            <f:setPropertyActionListener target="#{usuarioBean.active}" value="#{0}" />
+                                                            <f:ajax render=":box-table" />
+                                                        </h:commandButton>
+                                                    </span>
+                                                </c:if>
+                                                <c:if test="#{usu.activo != 1}">
+                                                    <span>
+                                                        <h:commandButton class="btn btn-success" value="#{msg['marcacion.generic.btnActive']}" actionListener="#{usuarioBean.changeState}">
+                                                            <f:setPropertyActionListener target="#{usuarioBean.usuarioSelected}" value="#{usu}" />
+                                                            <f:setPropertyActionListener target="#{usuarioBean.active}" value="#{1}" />
+                                                            <f:ajax render=":box-table" />
+                                                        </h:commandButton>
+                                                    </span>
+                                                </c:if>
+                                            </h:form>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+                            </tbody>
+                        </table>
+                    </h:panelGroup>
+                    <!-- Button trigger modal -->
+                    <h:form>
+                        <h:panelGroup>
+                            <span>
+                                <h:commandButton type="button" styleClass="btn btn-primary btn-new" value="#{msg['marcacion.generic.btnAdd']}" immediate="true">
+                                    <f:ajax listener="#{usuarioBean.Clean}" render=":form-add:personalForm"/>
+                                </h:commandButton>
+                            </span>
+                        </h:panelGroup>
+                    </h:form>
+
+                    <h:panelGroup >
+                        <!-- Modal -->
+                        <!--modal fade-->
+                        <div class="modal fade" id="personalModal" tabindex="-1" role="dialog" aria-labelledby="personalModallLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <h:form id="form-add">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span class="sr-only">#{msg['marcacion.personal.modal.close']}</span></button>
+                                            <h4 class="modal-title" id="myModalLabel">#{msg['marcacion.personal.modal.title']}</h4>
+                                        </div>
+                                        <h:panelGroup id="personalForm">
+                                            <div class="modal-body">
+
+
+                                                <div class="row">
+                                                    <div class="col-md-3">
+
+                                                        <h:inputHidden id="id" value="#{usuarioBean.usuarioSelected.id}" />
+
+                                                        <h:outputLabel for="nombre"  value="#{msg['marcacion.personal.name']}" />
+                                                        <h:inputText id="nombre" value="#{usuarioBean.usuarioSelected.presona.nombre}" class="required" rendered="true"  />
+                                                        <h:message for="nombre" />
+
+                                                        <h:outputLabel for="apellido" value="#{msg['marcacion.personal.lastName']}" />
+                                                        <h:inputText id="apellido" value="#{usuarioBean.usuarioSelected.presona.apellido}" class="required" required="true"/>
+                                                        <h:message for="apellido" />
+
+                                                        <h:outputLabel for="edad" value="#{msg['marcacion.usuario.age']}" />
+                                                        <h:inputText id="edad" value="#{usuarioBean.usuarioSelected.presona.fecNac}" a:placeholder="dd/MM/yyyy" required="true">
+                                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                        </h:inputText>
+                                                        <h:message for="edad" />
+
+                                                        <h:outputLabel for="email" value="#{msg['marcacion.personal.email']}" />
+                                                        <h:inputText id="email" value="#{usuarioBean.usuarioSelected.presona.email}" required="true">
+                                                            <f:validateRegex
+                                                                pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                                        </h:inputText>
+                                                        <h:message for="email" />
+
+                                                        <h:outputLabel  value="#{msg['marcacion.personal.state']}" />
+                                                        <h:panelGroup id="departamento">
+                                                            <h:selectOneMenu styleClass="form-control" value="#{usuarioBean.departamentoSelected}" role="#{msg['marcacion.generic.departamento']}"  converter="departamentoConverter" validator="selectItemValidator">
+                                                                <f:selectItem itemValue="" itemLabel="#{msg['marcacion.generic.select']}" />
+                                                                <f:selectItems value="#{usuarioBean.departamentoList}" var="depart" itemLabel="#{depart.departamento}" itemValue="#{depart}" />
+                                                                <f:ajax listener="#{usuarioBean.getCities}" render="ciudad" />
+                                                            </h:selectOneMenu>
+                                                        </h:panelGroup>
+
+                                                        <h:outputLabel for="ciudad" value="#{msg['marcacion.personal.city']}" />
+                                                        <h:panelGroup id="ciudad">
+                                                            <h:selectOneMenu styleClass="form-control" value="#{usuarioBean.persona.ciudadId}" role="#{msg['marcacion.generic.ciudad']}" converter="ciudadConverter" validator="selectItemValidator">
+                                                                <f:selectItem itemValue="" itemLabel="#{msg['marcacion.generic.select']}" />
+                                                                <f:selectItems value="#{usuarioBean.ciudadList}" var="ciudad" itemLabel="#{ciudad.ciudad}" itemValue="#{ciudad}">
+                                                                </f:selectItems>
+                                                            </h:selectOneMenu>
+                                                        </h:panelGroup>
+                                                        <h:message for="ciudad" />
+
+                                                    </div>
+                                                    <div class="col-md-4 col-md-offset-4">
+
+                                                        <h:outputLabel for="address"  value="#{msg['marcacion.personal.address']}" />
+                                                        <h:inputText id="address" value="#{usuarioBean.usuarioSelected.presona.direccion}" required="true"/>
+                                                        <h:message for="address" />
+
+                                                        <h:outputLabel for="username" value="#{msg['marcacion.usuario.username']}" />
+                                                        <h:inputText id="username" value="#{usuarioBean.usuarioSelected.username}" required="true" />
+                                                        <h:message for="username" />
+
+                                                        <h:outputLabel for="password" value="#{msg['marcacion.usuario.password']}" />
+                                                        <h:inputSecret id="password" value="#{usuarioBean.usuarioSelected.password}">
+                                                            <f:ajax event="blur" render="passwordError" />
+                                                        </h:inputSecret>
+
+                                                        <h:outputLabel for="Repeatpassword" value="#{msg['marcacion.usuario.passwordRepeat']}" />
+                                                        <h:inputSecret id="Repeatpassword"  validator="#{usuarioBean.validateSamePassword}" />
+                                                        <h:message for="nombre" />
+
+                                                        <h:outputLabel for="rol" value="#{msg['marcacion.usuario.rol']}" />
+
+                                                        <h:selectOneMenu id="rol" styleClass="form-control" value="#{usuarioBean.usuarioSelected.rol}" role="#{msg['marcacion.generic.rol']}" converter="rolConverter" validator="selectItemValidator">
+                                                            <f:selectItem itemValue="" itemLabel="#{msg['marcacion.generic.select']}" />
+                                                            <f:selectItems value="#{usuarioBean.rolList}" var="rol" itemLabel="#{rol.rol}" itemValue="#{rol}" />
+                                                        </h:selectOneMenu>
+                                                        <h:message for="rol" />
+
+                                                        <h:outputLabel for="active" value="#{msg['marcacion.usuario.enable']}" />
+                                                        <h:inputText id="active" value="#{usuarioBean.persona.activo}" />
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">#{msg['marcacion.personal.modal.close']}</button>
+                                                <h:commandButton class="btn btn-primary" value="#{msg['marcacion.personal.modal.guardar']}" action="#{usuarioBean.add}">
+                                                    <f:ajax execute="@form" render="@form" />
+                                                </h:commandButton>
+                                            </div>
+                                        </h:panelGroup>
+                                    </h:form>
+                                </div>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+                </div>
+
+            </ui:define>
+
+            <ui:define name="additional-js">
+
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $(".btn-new").attr("data-toggle", "modal").attr("data-target", "#personalModal");
+
+                    });
+                </script>
+            </ui:define>
+
+        </ui:composition>
+    </h:body>
+</html>
